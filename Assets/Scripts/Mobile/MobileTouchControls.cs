@@ -16,6 +16,8 @@ public sealed class MobileTouchControls : MonoBehaviour
     private RectTransform _stickHandle;
     private int _stickPointerId = int.MinValue;
     private int _lookPointerId = int.MinValue;
+    private bool _primaryFireHeld;
+    private bool _secondaryFireHeld;
 
     private const float ButtonAlpha = 0.72f;
 
@@ -46,8 +48,10 @@ public sealed class MobileTouchControls : MonoBehaviour
         SendHeld("OnRun", false);
         SendHeld(Constants.TypedEvents.Inputs.OnJump, false);
         SendHeld("OnGrapplingThrow", false);
-        SendHeld("OnPrimaryFire", false);
-        SendHeld("OnSecondaryFire", false);
+        if (_primaryFireHeld)
+            SendTap("OnPrimaryFire");
+        if (_secondaryFireHeld)
+            SendTap("OnSecondaryFire");
     }
 
     private void EnsureEventSystem()
@@ -107,9 +111,9 @@ public sealed class MobileTouchControls : MonoBehaviour
         AddHoldButton(canvasObject.transform, "RUN", new Vector2(0.15f, 0.39f), 58,
             () => SendHeld("OnRun", true), () => SendHeld("OnRun", false));
         AddHoldButton(canvasObject.transform, "FIRE", new Vector2(0.865f, 0.255f), 104,
-            () => SendTap("OnPrimaryFire"), () => SendTap("OnPrimaryFire"));
+            () => SetFireHeld(true, true), () => SetFireHeld(true, false));
         AddHoldButton(canvasObject.transform, "SUB", new Vector2(0.70f, 0.18f), 76,
-            () => SendTap("OnSecondaryFire"), () => SendTap("OnSecondaryFire"));
+            () => SetFireHeld(false, true), () => SetFireHeld(false, false));
         AddHoldButton(canvasObject.transform, "JUMP", new Vector2(0.91f, 0.47f), 72,
             () => SendHeld(Constants.TypedEvents.Inputs.OnJump, true),
             () => SendHeld(Constants.TypedEvents.Inputs.OnJump, false));
@@ -196,6 +200,15 @@ public sealed class MobileTouchControls : MonoBehaviour
     {
         if (_stickHandle != null)
             _stickHandle.anchoredPosition = anchoredPosition;
+    }
+
+    private void SetFireHeld(bool primary, bool held)
+    {
+        ref bool state = ref (primary ? ref _primaryFireHeld : ref _secondaryFireHeld);
+        if (state == held)
+            return;
+        state = held;
+        SendTap(primary ? "OnPrimaryFire" : "OnSecondaryFire");
     }
 
     internal void SendTap(string eventName)
