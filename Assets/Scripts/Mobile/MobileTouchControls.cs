@@ -14,7 +14,6 @@ public sealed class MobileTouchControls : MonoBehaviour
 
     private Canvas _canvas;
     private RectTransform _stickHandle;
-    private Vector2 _stickOrigin;
     private int _stickPointerId = int.MinValue;
     private int _lookPointerId = int.MinValue;
 
@@ -30,6 +29,12 @@ public sealed class MobileTouchControls : MonoBehaviour
 
         EnsureEventSystem();
         BuildInterface();
+    }
+
+    private void Update()
+    {
+        if (_canvas != null && InputManager.Instance != null)
+            _canvas.enabled = InputManager.Instance.IsJuggernautInputActive;
     }
 
     private void OnDestroy()
@@ -83,7 +88,7 @@ public sealed class MobileTouchControls : MonoBehaviour
 
         // Movement joystick.
         var joystick = CreateImage("Movement Joystick", canvasObject.transform,
-            new Vector2(0.055f, 0.075f), new Vector2(0.235f, 0.34f),
+            new Vector2(0.15f, 0.205f), new Vector2(0.15f, 0.205f),
             new Color(0.08f, 0.1f, 0.13f, 0.42f));
         joystick.rectTransform.sizeDelta = new Vector2(170, 170);
         joystick.gameObject.AddComponent<MobileJoystick>().Initialize(this);
@@ -220,7 +225,6 @@ public sealed class MobileTouchControls : MonoBehaviour
         if (!IsStickPointer(pointerId))
             return;
         _stickPointerId = int.MinValue;
-        _stickOrigin = Vector2.zero;
         SetStickHandle(Vector2.zero);
         SendMove(Vector2.zero);
     }
