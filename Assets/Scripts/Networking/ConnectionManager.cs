@@ -5,7 +5,9 @@ using Networking.Widgets.Core.Base.Session;
 using Networking.Widgets.Session.Session;
 using Networking.Widgets.Session.Widgets.Base;
 using Unity.Services.Lobbies;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Networking
 {
