@@ -70,3 +70,21 @@ Check scenes, player settings, signing requirements, permissions, orientation, m
 - The FMOD integration contains mobile platform-selection classes, but the checked-in FMOD native-platform folder currently contains Windows, macOS, and Linux libraries only. The iOS native FMOD libraries and correct Unity plugin import settings are therefore an explicit build prerequisite; the presence of mobile C# classes alone does not prove iOS audio will link.
 - `Assets/Scripts/Networking/ConnectionManager.cs` has an unconditional `using UnityEditor;` import while much of its implementation is wrapped in `#if UNITY_EDITOR`. This needs to be guarded or moved into an Editor-only assembly/file before a player build is considered safe. The class also needs a runtime session-flow review because its visible session-creation path is currently editor-oriented.
 - `AuthManager` and the multiplayer widgets depend on Unity Services authentication/session APIs, and the optional Firebase authentication path is compile-symbol controlled. These paths need an iOS build and service-configuration test; the repository source alone cannot establish that the remote services are configured and operational.
+
+
+## Touch-input implementation — first pass committed
+
+The first additive mobile input implementation is now on `ios-port`:
+
+- Added `Assets/Scripts/Mobile/MobileTouchControls.cs`.
+- `InputManager` now attaches the mobile overlay automatically on mobile platforms and exposes the existing pause flow to the overlay.
+- The overlay is shown only while the existing `Juggernaut` action map is active.
+- It provides a movement joystick, right-side camera-look surface, primary/secondary fire, jump, grapple, run, reload, zoom, view, map, objectives, and pause controls.
+- Touch controls dispatch through the same event names consumed by the existing gameplay systems. The keyboard/mouse action maps have not been removed or replaced.
+- The run input handler now returns to walking when the run control is released, rather than leaving the movement mode set to running.
+
+### Not yet verified
+
+This is a source implementation, not a tested mobile build. It has not yet been compiled by Unity, tested in the Editor, or run on an iPhone. The UI layout, touch sensitivity, simultaneous multi-touch behavior, action-map transitions, and all gameplay events require device validation. The first pass is intentionally isolated on `ios-port`; it does not alter `main`.
+
+Next: audit and resolve runtime-only desktop dependencies, then continue with iOS audio/native plugin configuration and a real build path.
