@@ -795,7 +795,11 @@ namespace Gameplay.Mecha
         {
             if (data is not bool run || CurrentMovementMode == MovementMode.Dashing)
                 return;
-            CurrentMovementMode = MovementMode.Running;
+
+            if (run)
+                CurrentMovementMode = MovementMode.Running;
+            else if (CurrentMovementMode == MovementMode.Running)
+                CurrentMovementMode = MovementMode.Walking;
         }
 
 
