@@ -61,3 +61,12 @@ Check scenes, player settings, signing requirements, permissions, orientation, m
 - Avoid placeholder machines, substitute gameplay, or a simplified clone.
 - Do not claim an iOS build works until it has been built and tested on hardware.
 - Record every unverified assumption and every platform-specific change.
+
+
+## Additional source-level findings
+
+- The Juggernaut action map includes 22 named actions, including movement, camera look, both weapon triggers, zoom, grapple, reload, scavenger commands, dash/jump, view/map/objective controls, and pause. Its current bindings are keyboard and mouse controls; the action map can be extended with touch bindings or driven by a dedicated on-screen input component.
+- The current SteamManager source defines Steamworks as disabled outside Windows/Linux/macOS standalone targets. This is a good starting guard, but all other Steamworks call sites and plugin import settings still need checking so iOS does not compile or load desktop-only code.
+- The FMOD integration contains mobile platform-selection classes, but the checked-in FMOD native-platform folder currently contains Windows, macOS, and Linux libraries only. The iOS native FMOD libraries and correct Unity plugin import settings are therefore an explicit build prerequisite; the presence of mobile C# classes alone does not prove iOS audio will link.
+- `Assets/Scripts/Networking/ConnectionManager.cs` has an unconditional `using UnityEditor;` import while much of its implementation is wrapped in `#if UNITY_EDITOR`. This needs to be guarded or moved into an Editor-only assembly/file before a player build is considered safe. The class also needs a runtime session-flow review because its visible session-creation path is currently editor-oriented.
+- `AuthManager` and the multiplayer widgets depend on Unity Services authentication/session APIs, and the optional Firebase authentication path is compile-symbol controlled. These paths need an iOS build and service-configuration test; the repository source alone cannot establish that the remote services are configured and operational.
