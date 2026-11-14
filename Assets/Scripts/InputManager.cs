@@ -28,6 +28,10 @@ public class InputManager : Singleton<InputManager>
         var keybindsSave = PlayerPrefs.GetString("keybinds");
         if (keybindsSave != "")
             _playerInput.actions.LoadBindingOverridesFromJson(keybindsSave);
+
+        // Add the mobile overlay without replacing desktop input.
+        if (Application.isMobilePlatform && GetComponent<MobileTouchControls>() == null)
+            gameObject.AddComponent<MobileTouchControls>();
     }
 
     private void OnEnable()
@@ -105,6 +109,11 @@ public class InputManager : Singleton<InputManager>
         if (data < 0)
             EventManager.TriggerEvent("OnZoomOut", data);
         //EventManager.TriggerEvent("OnZoomOut", data);
+    }
+
+    public void OnMobilePause()
+    {
+        OnPause();
     }
 
     private void OnPause()
