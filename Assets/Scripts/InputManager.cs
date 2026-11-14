@@ -111,6 +111,8 @@ public class InputManager : Singleton<InputManager>
         //EventManager.TriggerEvent("OnZoomOut", data);
     }
 
+    public bool IsJuggernautInputActive => _playerInput != null && _playerInput.currentActionMap != null && _playerInput.currentActionMap.name == "Juggernaut";
+
     public void OnMobilePause()
     {
         OnPause();
