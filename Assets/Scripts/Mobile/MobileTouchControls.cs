@@ -39,6 +39,9 @@ public sealed class MobileTouchControls : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (EventManager.Instance == null)
+            return;
+
         SendMove(Vector2.zero);
         SendHeld("OnRun", false);
         SendHeld(Constants.TypedEvents.Inputs.OnJump, false);
